@@ -20,8 +20,8 @@
 // Set ONE of the following parameters to "true" to see a case part in a
 // printable orientation. Keep the rest set to "undef"
 FRAME = undef;
-REARPANEL = undef;
 BACKPLANE = undef;
+REARPANEL = undef;
 BUTTON = undef;
 
 // Alternatively, set the following parameter to "true" to see the fully
@@ -37,6 +37,10 @@ ASSEMBLED = undef;
 // this parameter to the diameter of the bolts you are using (ie "3")
 INSERT_DIAMETER = 5;
 
+// Other editable parameters are at the end of the file!
+
+// *** MAIN ROUTINE ***
+
 if (ASSEMBLED) {
   // shows the case fully assembled with Inky Impression and Raspberry Pi Zero
   // boards in position. Prefix any of the lines below with "*" to temporarily
@@ -49,6 +53,7 @@ if (ASSEMBLED) {
   rpizero();
 }
 else {
+  // shows case parts in the correct orientation for printing
   if (FRAME) { rotate([90,0,0]) frame(); }
   if (REARPANEL) { rotate([-90,0,0]) rearpanel(); }
   if (BACKPLANE) { rotate([90,0,0]) backplane(); }
@@ -56,90 +61,6 @@ else {
 }
 
 // *** MODULES ***
-
-module rearpanel() {
-  difference() {
-    color("LightSlateGray") union() { // union of solids
-      // panel
-      translate([rearpanel_offset_w, rearpanel_offset_d, rearpanel_offset_h])
-        cube([rearpanel_w, rearpanel_d, rearpanel_h]);
-      
-      // mounts
-      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
-        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
-        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
-      }
-      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
-        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
-        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
-      }
-      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
-        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
-        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
-      }
-      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d,  rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
-        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
-        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
-      }
-    } // union of solids
-    
-    union() { //union of holes
-      // mounting bolt holes
-      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
-        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
-      }
-      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
-        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
-      }
-      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
-        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
-      }
-      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d,  rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
-        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
-      }
-      
-      // keyholes for wall-mounting
-      key1_offset_w = rearpanel_key_spacing_w / 2;
-      key2_offset_w = -rearpanel_key_spacing_w / 2;
-      
-      translate([rearpanel_offset_w + rearpanel_w / 2 + key1_offset_w, rearpanel_offset_d - a_bit, rearpanel_offset_h + rearpanel_h / 2])
-        union() { 
-          translate([0, 0, 0]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_slot_r);
-          translate([0, 0, -rearpanel_key_slot_h]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_hole_r);
-          translate([-rearpanel_key_slot_r, 0, -rearpanel_key_slot_h]) cube([rearpanel_key_slot_r * 2,rearpanel_d + a_bit_more,rearpanel_key_slot_h]);
-        }
-
-      translate([rearpanel_offset_w + rearpanel_w / 2 + key2_offset_w, rearpanel_offset_d - a_bit, rearpanel_offset_h + rearpanel_h / 2])
-        union() { 
-          translate([0, 0, 0]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_slot_r);
-          translate([0, 0, -rearpanel_key_slot_h]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_hole_r);
-          translate([-rearpanel_key_slot_r, 0, -rearpanel_key_slot_h]) cube([rearpanel_key_slot_r * 2,rearpanel_d + a_bit_more,rearpanel_key_slot_h]);
-        }
-    } // union of holes
-  } // difference()
-} // module rearpanel()
-
-module rpizero() {
-  // Crude Raspberry Pi Zero model to check for fit
-  translate([rpizero_offset_w, rpizero_offset_d, rpizero_offset_h])
-    color("Green") cube([rpizero_w, rpizero_d, rpizero_h]);
-} // module rpizero()
-
-module buttons() {
-  color("red") button(inky_btn_a_offset_h); 
-  color("yellow") button(inky_btn_b_offset_h);
-  color("green") button(inky_btn_c_offset_h);
-  color("blue") button(inky_btn_d_offset_h);
-} // module buttons()
-
-module button(offset_h) {
-  translate([button_offset_w, inky_board_d, offset_h])
-    union() {  
-      cube([button_w, button_d, button_h]);
-      translate([0,0,button_h/2]) rotate([-90,0,0]) cylinder(h=button_d, r=button_h/2);
-      translate([button_lug_offset_w,button_lug_offset_d,button_lug_offset_h]) cube([button_lug_w,button_lug_d,button_lug_h]);
-    }
-} // module button(offset_h)
 
 module frame() {
   // The front and sides of the case
@@ -246,6 +167,89 @@ module backplane() {
   } // difference()
 } // module backplane()
 
+module buttons() {
+  color("red") button(inky_btn_a_offset_h); 
+  color("yellow") button(inky_btn_b_offset_h);
+  color("green") button(inky_btn_c_offset_h);
+  color("blue") button(inky_btn_d_offset_h);
+} // module buttons()
+
+module button(offset_h) {
+  translate([button_offset_w, inky_board_d, offset_h])
+    union() {  
+      cube([button_w, button_d, button_h]);
+      translate([0,0,button_h/2]) rotate([-90,0,0]) cylinder(h=button_d, r=button_h/2);
+      translate([button_lug_offset_w,button_lug_offset_d,button_lug_offset_h]) cube([button_lug_w,button_lug_d,button_lug_h]);
+    }
+} // module button(offset_h)
+
+module rearpanel() {
+  difference() {
+    color("LightSlateGray") union() { // union of solids
+      // panel
+      translate([rearpanel_offset_w, rearpanel_offset_d, rearpanel_offset_h])
+        cube([rearpanel_w, rearpanel_d, rearpanel_h]);
+      
+      // mounts
+      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
+        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
+        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
+      }
+      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
+        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
+        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
+      }
+      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
+        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
+        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
+      }
+      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d,  rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
+        cube([rearpanel_mount_w, rearpanel_mount_d, rearpanel_mount_h]);
+        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,0]) cylinder(h=rearpanel_mount_h, r=rearpanel_mount_r);
+      }
+    } // union of solids
+    
+    union() { //union of holes
+      // mounting bolt holes
+      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
+        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
+      }
+      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h]) {
+        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
+      }
+      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
+        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
+      }
+      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d,  rearpanel_offset_h + rearpanel_h - rearpanel_mount_h]) {
+        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=rearpanel_mount_h+a_bit_more, r=rearpanel_mount_insert_r);
+      }
+      
+      // keyholes for wall-mounting
+      key1_offset_w = rearpanel_key_spacing_w / 2;
+      key2_offset_w = -rearpanel_key_spacing_w / 2;
+      
+      translate([rearpanel_offset_w + rearpanel_w / 2 + key1_offset_w, rearpanel_offset_d - a_bit, rearpanel_offset_h + rearpanel_h / 2])
+        union() { 
+          translate([0, 0, 0]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_slot_r);
+          translate([0, 0, -rearpanel_key_slot_h]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_hole_r);
+          translate([-rearpanel_key_slot_r, 0, -rearpanel_key_slot_h]) cube([rearpanel_key_slot_r * 2,rearpanel_d + a_bit_more,rearpanel_key_slot_h]);
+        }
+
+      translate([rearpanel_offset_w + rearpanel_w / 2 + key2_offset_w, rearpanel_offset_d - a_bit, rearpanel_offset_h + rearpanel_h / 2])
+        union() { 
+          translate([0, 0, 0]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_slot_r);
+          translate([0, 0, -rearpanel_key_slot_h]) rotate([-90,0,0]) cylinder(h=rearpanel_d + a_bit_more, r=rearpanel_key_hole_r);
+          translate([-rearpanel_key_slot_r, 0, -rearpanel_key_slot_h]) cube([rearpanel_key_slot_r * 2,rearpanel_d + a_bit_more,rearpanel_key_slot_h]);
+        }
+    } // union of holes
+  } // difference()
+} // module rearpanel()
+
+module rpizero() {
+  // Crude Raspberry Pi Zero model to check for fit
+  translate([rpizero_offset_w, rpizero_offset_d, rpizero_offset_h])
+    color("Green") cube([rpizero_w, rpizero_d, rpizero_h]);
+} // module rpizero()
 
 module inky() {
   // Model of the Inky Impression to test fit within the case
@@ -272,8 +276,7 @@ module inky() {
       }
     }
   }
-      
-  
+        
   // buttons
   translate([inky_btn_offset_w,inky_board_d,inky_btn_a_offset_h])
     union() {
