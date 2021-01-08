@@ -2,6 +2,8 @@
 
 ## Introduction
 
+![Front View](assembled-front.png "Front View")
+
 This is a wall-mounting case for the [Pimoroni Inky Impression](https://shop.pimoroni.com/products/inky-impression) 7-colour e-ink display. I wanted to make a simple protective case for the display and a Raspberry Pi Zero W which had the following features:
 
 * A clean front with no visible fixings and a symmetrical border around the image area
@@ -13,6 +15,8 @@ This is a wall-mounting case for the [Pimoroni Inky Impression](https://shop.pim
 The Inky Impression only has mounting points on the back surface, which makes it hard to produce a standard, 3d-printable case that doesn't put any pressure on the fragile glass front. Pressing it into a frame or sliding it into slots might put too much strain on some areas. I solved this by adding a backplane within the case, which screws to the Inky Impression's mount points and holds it slightly away from the front of the case.
 
 Side-mounted buttons are also held in position by the backplane and help activate the switches on the Inky Impression board when it is in the case. The rear panel has keyholes for wall-mounting on screws, and is held onto the front of the case by 4 x M3 screws (with optional threaded inserts). The case has a cutout at the bottom for access to the breakout connector and as a cable-exit for the Raspberry Pi's power cable.
+
+![Rear View](assembled-rear.png "Rear View")
 
 ## Printing
 
