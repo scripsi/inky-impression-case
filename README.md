@@ -1,8 +1,10 @@
 # Inky Impression Case
 
+![Front View](assembled-front.png "Front View")
+
 ## Introduction
 
-![Front View](assembled-front.png "Front View")
+![Exploded Front View](exploded-front.png "Exploded Front View")
 
 This is a wall-mounting case for the [Pimoroni Inky Impression](https://shop.pimoroni.com/products/inky-impression) 7-colour e-ink display. I wanted to make a simple protective case for the display and a Raspberry Pi Zero W which had the following features:
 
@@ -16,7 +18,7 @@ The Inky Impression only has mounting points on the back surface, which makes it
 
 Side-mounted buttons are also held in position by the backplane and help activate the switches on the Inky Impression board when it is in the case. The rear panel has keyholes for wall-mounting on screws, and is held onto the front of the case by 4 x M3 screws (with optional threaded inserts). The case has a cutout at the bottom for access to the breakout connector and as a cable-exit for the Raspberry Pi's power cable.
 
-![Rear View](assembled-rear.png "Rear View")
+![Exploded Rear View](exploded-rear.png "Exploded Rear View")
 
 ## Printing
 
@@ -44,6 +46,8 @@ You will also need:
 * Heat-set the inserts into the mounts on the rear panel and then place the rear panel into the frame. The pads on the rear panel mounts should hold the backplane in place within the case.
 * Use the M3 bolts to secure the rear panel to the case.
 * To wall-mount, place two screws on the wall, 100mm apart and horizontally in line with where you want the centre of the screen, then slot the keyholes in the rear panel onto the screws.
+
+![Rear View](assembled-rear.png "Rear View")
 
 ## Customisation
 

@@ -24,10 +24,15 @@ BACKPLANE = undef;
 REARPANEL = undef;
 BUTTON = undef;
 
-// Alternatively, set the following parameter to "true" to see the fully
+// Set the following parameter to "true" to see the fully
 // assembled case. Keep it set to "undef" when showing the individual
 // printable parts.
 ASSEMBLED = undef;
+
+// Set the following parameter to "true" to see an exploded view
+// of the case. Keep it set to "undef" when showing the individual
+// printable parts.
+EXPLODED = undef;
 
 // The rear panel is attached to the frame using M3 bolts. The mounts on
 // the rear panel can take heat-set threaded inserts to make it easier to
@@ -51,8 +56,15 @@ if (ASSEMBLED) {
   buttons();
   inky();
   rpizero();
-}
-else {
+} else
+if (EXPLODED) {
+  translate([0,-50,0]) frame();
+  translate([0,130,0]) rearpanel();
+  translate([0,50,0]) backplane();
+  translate([-50,-50,0]) buttons();
+  inky();
+  translate([0,80,0]) rpizero();
+} else {
   // shows case parts in the correct orientation for printing
   if (FRAME) { rotate([90,0,0]) frame(); }
   if (REARPANEL) { rotate([-90,0,0]) rearpanel(); }
