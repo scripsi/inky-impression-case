@@ -19,7 +19,7 @@
 //
 // Set ONE of the following parameters to "true" to see a case part in a
 // printable orientation. Keep the rest set to "undef"
-FRAME = undef;
+FRAME = true;
 BACKPLANE = undef;
 REARPANEL = undef;
 BUTTON = undef;
@@ -34,13 +34,13 @@ ASSEMBLED = undef;
 // printable parts.
 EXPLODED = undef;
 
-// The rear panel is attached to the frame using M3 bolts. The mounts on
-// the rear panel can take heat-set threaded inserts to make it easier to
+// The rear panel is attached to the frame using countersunk bolts. The mounts
+// on the rear panel can take heat-set threaded inserts to make it easier to
 // screw in the bolts. Set the following parameter to the recommended hole
 // diameter for the inserts you are using (max: 6). If you don't want to
 // use inserts and just want to self-tap the bolts into the plastic, set
-// this parameter to the diameter of the bolts you are using (ie "3")
-INSERT_DIAMETER = 5;
+// this to the diameter of the bolts you are using (eg "2.5" for M2.5 bolts)
+INSERT_DIAMETER = 3.5;
 
 // Other editable parameters are at the end of the file!
 
@@ -72,6 +72,8 @@ if (EXPLODED) {
   if (BUTTON) { rotate([90,0,0]) button(0); }
 }
 
+// bolt(1.25,10);
+
 // *** MODULES ***
 
 module frame() {
@@ -99,16 +101,16 @@ module frame() {
       
       // mount holes
       translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h]) {
-        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=frame_thickness_sides+a_bit_more, r=rearpanel_mount_bolt_r);
+        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) bolt(radius=rearpanel_mount_bolt_r + rearpanel_mount_bolt_clearance,length=rearpanel_mount_bolt_length);
       }
       translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h]) {
-        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=frame_thickness_sides+a_bit_more, r=rearpanel_mount_bolt_r);
+        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) bolt(radius=rearpanel_mount_bolt_r + rearpanel_mount_bolt_clearance,length=rearpanel_mount_bolt_length);
       }
-      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h + frame_h - frame_thickness_sides]) {
-        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=frame_thickness_sides+a_bit_more, r=rearpanel_mount_bolt_r);
+      translate([rearpanel_offset_w + rearpanel_w - rearpanel_mount_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h + frame_h]) {
+        translate([rearpanel_mount_w-rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,a_bit]) rotate([180,0,0]) bolt(radius=rearpanel_mount_bolt_r + rearpanel_mount_bolt_clearance,length=rearpanel_mount_bolt_length);
       }
-      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h + frame_h - frame_thickness_sides]) {
-        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,-a_bit]) cylinder(h=frame_thickness_sides + a_bit_more, r=rearpanel_mount_bolt_r);
+      translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h + frame_h]) {
+        translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,a_bit]) rotate([180,0,0]) bolt(radius=rearpanel_mount_bolt_r + rearpanel_mount_bolt_clearance,length=rearpanel_mount_bolt_length);
       }
       
       // buttons
@@ -341,6 +343,12 @@ module inky() {
     
 } // module inky()
 
+module bolt(radius,length) {
+	h1=0.6*radius*2;
+	h2=length-h1;
+	cylinder(r=radius,h=h2);
+	cylinder(r1=radius*2,r2=radius,h=h1);
+} // module bolt()
 
 // *** PARAMETERS ***
 
@@ -461,7 +469,9 @@ rearpanel_mount_h = 10;
 rearpanel_mount_r = 5;
 rearpanel_mount_insert_r = INSERT_DIAMETER / 2;
 rearpanel_mount_insert_h = 4;
-rearpanel_mount_bolt_r = 1.75;
+rearpanel_mount_bolt_r = 1.25;
+rearpanel_mount_bolt_length = 6;
+rearpanel_mount_bolt_clearance = 0.2;
 rearpanel_key_slot_r = 2.5;
 rearpanel_key_hole_r = 4.5;
 rearpanel_key_slot_h = 7;
