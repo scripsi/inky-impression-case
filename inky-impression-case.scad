@@ -17,29 +17,37 @@
 //   4 x BUTTON - Button extensions to allow operation of the Inky Impression's
 //                buttons
 //
-// Set ONE of the following parameters to "true" to see a case part in a
-// printable orientation. Keep the rest set to "undef"
-FRAME = true;
-BACKPLANE = undef;
-REARPANEL = undef;
-BUTTON = undef;
+// Set ONE of the following parameters to "true" to see a case part in its
+// printable orientation. Keep the rest set to "false"
+FRAME = false;
+BACKPLANE = false;
+REARPANEL = false;
+BUTTON = false;
 
 // Set the following parameter to "true" to see the fully
-// assembled case. Keep it set to "undef" when showing the individual
+// assembled case. Keep it set to "false" when showing the individual
 // printable parts.
-ASSEMBLED = undef;
+ASSEMBLED = false;
 
 // Set the following parameter to "true" to see an exploded view
-// of the case. Keep it set to "undef" when showing the individual
+// of the case. Keep it set to "false" when showing the individual
 // printable parts.
-EXPLODED = undef;
+EXPLODED = false;
 
-// The rear panel is attached to the frame using countersunk bolts. The mounts
-// on the rear panel can take heat-set threaded inserts to make it easier to
+// The rear panel is attached to the frame using bolts. Set the following
+// parameter to the diameter of the bolts you are using
+BOLT_DIAMETER = 2.5; // M2.5 bolts
+
+// If you are using countersunk bolts, set the following parameter to "true",
+// otherwise set it to "false"
+BOLT_COUNTERSUNK = true;
+
+// The rear panel mounts can take heat-set threaded inserts to make it easier to
 // screw in the bolts. Set the following parameter to the recommended hole
 // diameter for the inserts you are using (max: 6). If you don't want to
 // use inserts and just want to self-tap the bolts into the plastic, set
-// this to the diameter of the bolts you are using (eg "2.5" for M2.5 bolts)
+// this to slightly less than the diameter of the bolts you are using,
+// for example: 2.3 for M2.5 bolts
 INSERT_DIAMETER = 3.5;
 
 // Other editable parameters are at the end of the file!
@@ -71,8 +79,6 @@ if (EXPLODED) {
   if (BACKPLANE) { rotate([90,0,0]) backplane(); }
   if (BUTTON) { rotate([90,0,0]) button(0); }
 }
-
-// bolt(1.25,10);
 
 // *** MODULES ***
 
@@ -346,8 +352,8 @@ module inky() {
 module bolt(radius,length) {
 	h1=0.6*radius*2;
 	h2=length-h1;
-	cylinder(r=radius,h=h2);
-	cylinder(r1=radius*2,r2=radius,h=h1);
+	cylinder(r=radius,h=length);
+  if (BOLT_COUNTERSUNK) {	cylinder(r1=radius*2,r2=radius,h=h1); }
 } // module bolt()
 
 // *** PARAMETERS ***
@@ -419,10 +425,10 @@ rpizero_offset_h = 52;
 rpizero_offset_d = 11.5;
 
 // Frame dimensions
-frame_thickness_front = 0.6;
+frame_thickness_front = 0.8;
 frame_thickness_sides = 1.6;
 frame_clearance_d = 0.5;
-frame_clearance_w = 0.5;
+frame_clearance_w = 1;
 frame_clearance_h = 0.5;
 frame_border = 12;
 frame_d = 20;
@@ -435,11 +441,11 @@ frame_offset_d = 0 - frame_clearance_d - frame_thickness_front;
 // Backplane dimensions
 backplane_clearance = 0.5; // cutout clearance around obstructions
 backplane_mount_hole_r = 1.4;
-backplane_offset_w = frame_offset_w + frame_thickness_sides + backplane_clearance;
-backplane_offset_h = frame_offset_h + frame_thickness_sides + backplane_clearance;
+backplane_offset_w = frame_offset_w + frame_thickness_sides;
+backplane_offset_h = frame_offset_h + frame_thickness_sides;
 backplane_offset_d = inky_board_d + inky_mount_d;
-backplane_w = frame_w - frame_thickness_sides * 2 - backplane_clearance * 2;
-backplane_h = frame_h - frame_thickness_sides * 2 - backplane_clearance * 2;
+backplane_w = frame_w - frame_thickness_sides * 2;
+backplane_h = frame_h - frame_thickness_sides * 2;
 backplane_d = 1.6; // backplane thickness
 
 // Button dimensions
@@ -465,13 +471,12 @@ rearpanel_offset_h = frame_offset_h + frame_thickness_sides + rearpanel_clearanc
 rearpanel_offset_d = frame_offset_d + frame_d - rearpanel_d;
 rearpanel_mount_w = -frame_offset_w - frame_thickness_sides;
 rearpanel_mount_d = rearpanel_offset_d - backplane_offset_d - backplane_d;
-rearpanel_mount_h = 10;
+rearpanel_mount_h = 8;
 rearpanel_mount_r = 5;
 rearpanel_mount_insert_r = INSERT_DIAMETER / 2;
-rearpanel_mount_insert_h = 4;
-rearpanel_mount_bolt_r = 1.25;
+rearpanel_mount_bolt_r = BOLT_DIAMETER / 2;
 rearpanel_mount_bolt_length = 6;
-rearpanel_mount_bolt_clearance = 0.2;
+rearpanel_mount_bolt_clearance = 0.1;
 rearpanel_key_slot_r = 2.5;
 rearpanel_key_hole_r = 4.5;
 rearpanel_key_slot_h = 7;
