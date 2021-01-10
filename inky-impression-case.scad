@@ -17,29 +17,36 @@
 //   4 x BUTTON - Button extensions to allow operation of the Inky Impression's
 //                buttons
 //
-// Set ONE of the following parameters to "true" to see a case part in its
-// printable orientation. Keep the rest set to "false"
+
+// Use the customizer in OpenScad (Menu: Window -> Customizer) to set the
+// following parameters and show different parts or views of the model. Only set
+// one of these to "true" at a time, and keep the others "false"!
+
+// The frame in printable orientation.
 FRAME = false;
+
+// The backplane in printable orientation.
 BACKPLANE = false;
+
+// The rear panel in printable orientation.
 REARPANEL = false;
+
+// A button in printable orientation
 BUTTON = false;
 
-// Set the following parameter to "true" to see the fully
-// assembled case. Keep it set to "false" when showing the individual
-// printable parts.
+// Show the fully assembled case
 ASSEMBLED = false;
 
-// Set the following parameter to "true" to see an exploded view
-// of the case. Keep it set to "false" when showing the individual
-// printable parts.
+// Show an exploded view of the case
 EXPLODED = false;
 
-// The rear panel is attached to the frame using bolts. Set the following
-// parameter to the diameter of the bolts you are using
+// The rear panel is held on by fixing bolts. Set the following parameters 
+// According to the bolts you are using
+
+// The diameter of the rear panel fixing bolts
 BOLT_DIAMETER = 2.5; // M2.5 bolts
 
-// If you are using countersunk bolts, set the following parameter to "true",
-// otherwise set it to "false"
+// Countersunk fixing bolts
 BOLT_COUNTERSUNK = true;
 
 // The rear panel mounts can take heat-set threaded inserts to make it easier to
@@ -48,6 +55,8 @@ BOLT_COUNTERSUNK = true;
 // use inserts and just want to self-tap the bolts into the plastic, set
 // this to slightly less than the diameter of the bolts you are using,
 // for example: 2.3 for M2.5 bolts
+
+// Threaded insert outer diameter
 INSERT_DIAMETER = 3.5;
 
 // Other editable parameters are at the end of the file!
@@ -137,23 +146,32 @@ module backplane() {
   // in the right position within the case
   
   difference(){
-    union() { //union of solids
+    color("SlateGray") union() { //union of solids
       // backplane
       translate([backplane_offset_w,backplane_offset_d,backplane_offset_h])
-        color("LightGray") cube([backplane_w,backplane_d,backplane_h]);
+        cube([backplane_w,backplane_d,backplane_h]);
+      // Mounting risers
+      translate([inky_mount_a_offset_w,inky_board_d+inky_mount_d,inky_mount_a_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_d + backplane_mount_riser_d, r=backplane_mount_riser_r);
+      translate([inky_mount_b_offset_w,inky_board_d+inky_mount_d,inky_mount_b_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_d + backplane_mount_riser_d, r=backplane_mount_riser_r);
+      translate([inky_mount_c_offset_w,inky_board_d+inky_mount_d,inky_mount_c_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_d + backplane_mount_riser_d, r=backplane_mount_riser_r);
+      translate([inky_mount_d_offset_w,inky_board_d+inky_mount_d,inky_mount_d_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_d + backplane_mount_riser_d, r=backplane_mount_riser_r);
     } // union of solids
     
     union() { // union of holes
       
       // mounting holes
       translate([inky_mount_a_offset_w,inky_board_d+inky_mount_d-a_bit,inky_mount_a_offset_h])
-        rotate([-90,0,0]) cylinder(h=backplane_d+a_bit_more, r=backplane_mount_hole_r);
+        rotate([-90,0,0]) cylinder(h=backplane_d+backplane_mount_riser_d+a_bit_more, r=backplane_mount_hole_r);
       translate([inky_mount_b_offset_w,inky_board_d+inky_mount_d-a_bit,inky_mount_b_offset_h])
-        rotate([-90,0,0]) cylinder(h=backplane_d+a_bit_more, r=backplane_mount_hole_r);
+        rotate([-90,0,0]) cylinder(h=backplane_d+backplane_mount_riser_d+a_bit_more, r=backplane_mount_hole_r);
       translate([inky_mount_c_offset_w,inky_board_d+inky_mount_d-a_bit,inky_mount_c_offset_h])
-        rotate([-90,0,0]) cylinder(h=backplane_d+a_bit_more, r=backplane_mount_hole_r);
+        rotate([-90,0,0]) cylinder(h=backplane_d+backplane_mount_riser_d+a_bit_more, r=backplane_mount_hole_r);
       translate([inky_mount_d_offset_w,inky_board_d+inky_mount_d-a_bit,inky_mount_d_offset_h])
-        rotate([-90,0,0]) cylinder(h=backplane_d+a_bit_more, r=backplane_mount_hole_r);
+        rotate([-90,0,0]) cylinder(h=backplane_d+backplane_mount_riser_d+a_bit_more, r=backplane_mount_hole_r);
       
       // button cutouts
       translate([inky_btn_offset_w - backplane_clearance, inky_board_d + inky_mount_d - a_bit, inky_btn_a_offset_h - backplane_clearance]) {
@@ -440,7 +458,9 @@ frame_offset_d = 0 - frame_clearance_d - frame_thickness_front;
 
 // Backplane dimensions
 backplane_clearance = 0.5; // cutout clearance around obstructions
-backplane_mount_hole_r = 1.4;
+backplane_mount_hole_r = 1.35;
+backplane_mount_riser_d = 1.5;
+backplane_mount_riser_r = backplane_mount_hole_r * 2;
 backplane_offset_w = frame_offset_w + frame_thickness_sides;
 backplane_offset_h = frame_offset_h + frame_thickness_sides;
 backplane_offset_d = inky_board_d + inky_mount_d;
