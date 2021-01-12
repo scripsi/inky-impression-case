@@ -18,7 +18,7 @@ The Inky Impression only has mounting points on the back surface, which makes it
 
 Side-mounted buttons are also held in position by the backplane and help activate the switches on the Inky Impression board when it is in the case. The rear panel has keyholes for wall-mounting on screws, and is held onto the front of the case by 4 bolts (with optional threaded inserts). The case has a cutout at the bottom for access to the breakout connector and as a cable-exit for the Raspberry Pi's power cable.
 
-![Rear View](img/assembled-rear.png "Rear View")
+![Exploded Rear View](img/exploded-rear.png "Exploded Rear View")
 
 ## Printing
 
@@ -46,16 +46,20 @@ You will also need:
 
 ## Construction
 
-![Exploded Rear View](img/exploded-rear.png "Exploded Rear View")
-
-* Test that the backplane fits right down into the frame to rest on the ledges around the top and sides. It should be a really snug fit - sandpaper the edges of the backplane a bit if it won't go in on the first try!
-* Mount the backplane to the Inky Impression using the M2.5 bolts that are supplied with the display.
-* Lay the frame face down on a worksurface and slide the four buttons into the slots in the side, with the rectangular lugs on each button facing towards you.
-* Gently slide the Inky Impression on its backplane into the frame, with the screen facing down and the slots for the buttons on the correct side.
-* Carefully press the Raspberry Pi Zero onto the header on the Inky Impression so that it is held firmly in place. Attach a Micro USB cable to the connector nearest the corner of the Pi and lead the cable through the slot in the bottom of the frame.
-* [Heat-set the inserts](https://markforged.com/resources/blog/heat-set-inserts) (if using) into the mounts on the rear panel and then place the rear panel into the frame. The pads on the rear panel mounts should hold the backplane in place within the case.
-* Use the M2.5 countersunk bolts to secure the rear panel to the case.
-* To wall-mount, place two screws on the wall, 100mm apart and horizontally in line with where you want the centre of the screen, then slot the keyholes in the rear panel onto the screws.
+1. Test that the backplane fits right down into the frame to rest on the ledges around the top and sides. It should be a really snug fit - sandpaper the edges of the backplane a bit if it won't go in on the first try!
+![Assembly - stage 1](img/assembly-01.jpg)
+2. Mount the backplane to the Inky Impression using the M2.5 bolts that are supplied with the display.
+![Assembly - stage 2](img/assembly-02.jpg)
+3. Lay the frame face down on a worksurface and slide the four buttons into the slots in the side, with the rectangular lugs on each button facing towards you.
+4. Gently slide the Inky Impression on its backplane into the frame, with the screen facing down and the slots for the buttons on the correct side.
+![Assembly - stages 3 and 4](img/assembly-03-04.jpg)
+5. Carefully press the Raspberry Pi Zero onto the header on the Inky Impression so that it is held firmly in place. Attach a Micro USB cable to the connector nearest the corner of the Pi and lead the cable through the slot in the bottom of the frame.
+![Assembly - stage 5](img/assembly-05.jpg)
+6. [Heat-set the inserts](https://markforged.com/resources/blog/heat-set-inserts) (if using) into the mounts on the rear panel.
+![Assembly - stage 6](img/assembly-06.jpg)
+7. Place the rear panel into the frame. The pads on the rear panel mounts should hold the backplane in place within the case. Use the M2.5 countersunk bolts to secure the rear panel to the case.
+![Assembly - stage 7](img/assembly-07.jpg)
+8. To wall-mount, place two screws on the wall, 100mm apart and horizontally in line with where you want the centre of the screen, then slot the keyholes in the rear panel onto the screws.
 
 ## Customisation
 
