@@ -17,6 +17,10 @@
 //   4 x BUTTON - Button extensions to allow operation of the Inky Impression's
 //                buttons
 //
+// There is also an optional addition:
+//
+//   1 x STAND - A desk stand that clips into the wall-mount keyholes
+//               on the rear panel
 
 // Use the customizer in OpenScad (Menu: Window -> Customizer) to set the
 // following parameters and show different parts or views of the model. Only set
@@ -33,6 +37,9 @@ REARPANEL = false;
 
 // A button in printable orientation
 BUTTON = false;
+
+// A desk stand in printable orientation
+STAND = false
 
 // Show the fully assembled case
 ASSEMBLED = false;
@@ -67,12 +74,12 @@ if (ASSEMBLED) {
   // shows the case fully assembled with Inky Impression and Raspberry Pi Zero
   // boards in position. Prefix any of the lines below with "*" to temporarily
   // remove that element and see inside the case
-  frame();
+  * frame();
   rearpanel();
-  backplane();
-  buttons();
-  inky();
-  rpizero();
+  * backplane();
+  * buttons();
+  * inky();
+  * rpizero();
 } else
 if (EXPLODED) {
   translate([0,-50,0]) frame();
@@ -90,6 +97,15 @@ if (EXPLODED) {
 }
 
 // *** MODULES ***
+
+module stand() {
+  difference() {
+    union() { // union of solids
+    } // union of solids
+    union { // union of holes
+    } // union of holes
+  } // difference()
+} // module stand()
 
 module frame() {
   // The front and sides of the case
