@@ -528,10 +528,10 @@ stand_peg_flange_d = rearpanel_d;
 
 stand_leg1_offset_w = (inky_board_w / 2) - rearpanel_key_spacing_w / 2;
 stand_leg2_offset_w = (inky_board_w / 2) + rearpanel_key_spacing_w / 2;
-stand_crossbar_w = rearpanel_key_spacing_w;
+stand_crossbar_w = rearpanel_key_spacing_w + stand_leg_w;
 stand_crossbar_d = stand_leg_w;
 stand_crossbar_r = stand_leg_r;
-stand_crossbar_offset_w = stand_leg1_offset_w;
+stand_crossbar_offset_w = stand_leg1_offset_w - (stand_leg_w / 2);
 stand_crossbar_offset_d = stand_offset_d + (stand_leg_d / 2) - stand_crossbar_r;
 
 module stand() {
@@ -584,9 +584,9 @@ module stand() {
       //crossbar
       translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
         rotate([-90+stand_angle,0,0])
-        translate([0,0,stand_offset_d]) union() {
+        translate([0,0,-stand_crossbar_d]) union() {
           cube([stand_crossbar_w,stand_crossbar_r,stand_crossbar_d]);
-          translate([0,0,stand_crossbar_r]) rotate([0,90,0]) cylinder(r=stand_crossbar_r,h=stand_crossbar_w);
+          // translate([0,0,stand_crossbar_r]) rotate([0,90,0]) cylinder(r=stand_crossbar_r,h=stand_crossbar_w);
         }  
     } // union of solids
     union() { // union of holes
