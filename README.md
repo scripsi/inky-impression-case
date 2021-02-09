@@ -4,13 +4,14 @@
 
 ## Introduction
 
-This is a wall-mounting case for the [Pimoroni Inky Impression](https://shop.pimoroni.com/products/inky-impression) 7-colour e-ink display. I wanted to make a simple protective case for the display and a Raspberry Pi Zero W which had the following features:
+This is a wall-mounting or desk-stand case for the [Pimoroni Inky Impression](https://shop.pimoroni.com/products/inky-impression) 7-colour e-ink display. I wanted to make a simple protective case for the display and a Raspberry Pi Zero W which had the following features:
 
 * A clean front with no visible fixings and a symmetrical border around the image area
 * No pressure applied to the fragile glass screen of the Inky Impression
 * Access to the 4 buttons on the Inky Impression board
 * Access to the breakout connector on the Inky Impression board
 * Simple wall-mounting
+* An optional desk-stand
 
 ![Exploded Front View](img/exploded-front.png "Exploded Front View")
 
@@ -35,6 +36,10 @@ And, depending on whether or not you are using threaded inserts, either:
 or:
 
 * 1 x inky-impression-case-rearpanel-no-inserts.stl (without inserts)
+
+There is also an optional stand that clips into the keyholes on the rear panel:
+
+* [ 1 x inky-impression-case-stand.stl ]
 
 The design is optimised for a 0.4mm nozzle and 0.2mm layer height with 20% infill. Using a concentric pattern on the bottom layer gives a nice finish to the frame.
 
