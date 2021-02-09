@@ -42,7 +42,7 @@ BUTTON = false;
 STAND = false;
 
 // Show the fully assembled case
-ASSEMBLED = true;
+ASSEMBLED = false;
 
 // Show an exploded view of the case
 EXPLODED = false;
@@ -74,32 +74,35 @@ if (ASSEMBLED) {
   // shows the case fully assembled with Inky Impression and Raspberry Pi Zero
   // boards in position. Prefix any of the lines below with "*" to temporarily
   // remove that element and see inside the case
-  * frame();
-  * rearpanel();
-  * backplane();
-  * buttons();
+  frame();
+  rearpanel();
+  backplane();
+  buttons();
   stand();
-  * inky();
-  * rpizero();
+  inky();
+  rpizero();
 } else
 if (EXPLODED) {
-  translate([0,-50,0]) frame();
-  translate([0,130,0]) rearpanel();
-  translate([0,50,0]) backplane();
-  translate([-50,-50,0]) buttons();
-  inky();
-  translate([0,80,0]) rpizero();
+  rotate([-stand_angle,0,0]) {
+    translate([0,-50,0]) frame();
+    translate([0,130,0]) rearpanel();
+    translate([0,150,0]) stand();
+    translate([0,50,0]) backplane();
+    translate([-50,-50,0]) buttons();
+    inky();
+    translate([0,80,0]) rpizero();
+  }
 } else {
   // shows case parts in the correct orientation for printing
   if (FRAME) { rotate([90,0,0]) frame(); }
   if (REARPANEL) { rotate([-90,0,0]) rearpanel(); }
   if (BACKPLANE) { rotate([90,0,0]) backplane(); }
   if (BUTTON) { rotate([90,0,0]) button(0); }
+  if (STAND) { rotate([-stand_angle,0,0]) stand(); }
 }
 
+
 // *** MODULES ***
-
-
 
 module frame() {
   // The front and sides of the case
@@ -293,6 +296,80 @@ module rearpanel() {
   } // difference()
 } // module rearpanel()
 
+module stand() {
+  difference() {
+    color("LightGray") union() { // union of solids
+      // leg1
+      translate([stand_leg1_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])
+        union() {
+          cube([stand_leg_w,stand_leg_r,stand_leg_h]);
+          translate([stand_leg_r,stand_leg_r,0]) cylinder(r=stand_leg_r,h=stand_leg_h);
+        }
+      translate([stand_leg1_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])  
+        rotate([-90+stand_angle,0,0])
+        union() {
+          cube([stand_leg_w,stand_leg_r,stand_leg_d]);
+          translate([stand_leg_r,0,stand_leg_r]) cylinder(r=stand_leg_r,h=stand_leg_d-stand_leg_r);
+        }
+      // peg1
+      translate([stand_leg1_offset_w,stand_offset_d,stand_peg_offset_h+stand_peg_stem_r])  
+        rotate([90,0,0])
+        union() {
+          cylinder(r=stand_peg_stem_r,h=stand_peg_stem_d);
+          hull(){
+            translate([0,0,stand_peg_stem_d]) cylinder(r=stand_peg_stem_r,h=stand_peg_flange_d);
+            translate([0,stand_peg_flange_r,stand_peg_stem_d]) cylinder(r=stand_peg_flange_r,h=stand_peg_flange_d);
+          }  
+        }
+      // leg2
+      translate([stand_leg2_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])
+        union() {
+          cube([stand_leg_w,stand_leg_r,stand_leg_h]);
+          translate([stand_leg_r,stand_leg_r,0]) cylinder(r=stand_leg_r,h=stand_leg_h);
+        }
+      translate([stand_leg2_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])  
+        rotate([-90+stand_angle,0,0])
+        union() {
+          cube([stand_leg_w,stand_leg_r,stand_leg_d]);
+          translate([stand_leg_r,0,stand_leg_r]) cylinder(r=stand_leg_r,h=stand_leg_d-stand_leg_r);
+        }
+      // peg2
+      translate([stand_leg2_offset_w,stand_offset_d,stand_peg_offset_h+stand_peg_stem_r])  
+        rotate([90,0,0])
+        union() {
+          cylinder(r=stand_peg_stem_r,h=stand_peg_stem_d);
+          hull(){
+            translate([0,0,stand_peg_stem_d]) cylinder(r=stand_peg_stem_r,h=stand_peg_flange_d);
+            translate([0,stand_peg_flange_r,stand_peg_stem_d]) cylinder(r=stand_peg_flange_r,h=stand_peg_flange_d);
+          }  
+        }
+      //crossbar
+      translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
+        rotate([-90+stand_angle,0,0])
+        translate([0,0,-stand_crossbar_d]) union() {
+          cube([stand_crossbar_w,stand_crossbar_r,stand_crossbar_d]);
+          translate([0,stand_crossbar_r,0]) rotate([0,90,0]) cylinder(r=stand_crossbar_r,h=stand_crossbar_w);
+        }  
+    } // union of solids
+    union() { // union of holes
+      // shave pegs
+      translate([stand_leg1_offset_w,stand_offset_d,stand_peg_offset_h])  
+        rotate([stand_angle * 2,0,0])
+          translate([-stand_leg_w/2,-stand_leg_w,0]) cube([stand_leg_w,stand_leg_w,stand_peg_flange_r*2]);
+      translate([stand_leg2_offset_w,stand_offset_d,stand_peg_offset_h])  
+        rotate([stand_angle * 2,0,0])
+          translate([-stand_leg_w/2,-stand_leg_w,0]) cube([stand_leg_w,stand_leg_w,stand_peg_flange_r*2]);
+      // cut off base of crossbar
+      //crossbar
+      translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
+        rotate([-90+stand_angle,0,0])
+        translate([0,0,-stand_crossbar_d]) union() {
+          translate([-a_bit,stand_crossbar_r,-stand_crossbar_r]) cube([stand_crossbar_w+a_bit_more,stand_crossbar_r,stand_crossbar_d]);
+        }
+    } // union of holes
+  } // difference()
+} // module stand()
+
 module rpizero() {
   // Crude Raspberry Pi Zero model to check for fit
   translate([rpizero_offset_w, rpizero_offset_d, rpizero_offset_h])
@@ -383,6 +460,7 @@ module bolt(radius,length) {
 	cylinder(r=radius,h=length);
   if (BOLT_COUNTERSUNK) {	cylinder(r1=radius*2,r2=radius,h=h1); }
 } // module bolt()
+
 
 // *** PARAMETERS ***
 
@@ -512,12 +590,13 @@ rearpanel_key_hole_r = 4.5;
 rearpanel_key_slot_h = 7;
 rearpanel_key_spacing_w = 100;
 
+// stand dimensions
 stand_angle = 20;
 stand_offset_d = rearpanel_offset_d + rearpanel_d;
 stand_offset_h = frame_offset_h;
 stand_leg_w = 8;
 stand_leg_h = inky_board_h * 2/3;
-stand_leg_d = 50;
+stand_leg_d = 40;
 stand_leg_r = stand_leg_w / 2;
 stand_peg_offset_h = inky_board_h / 2;
 stand_peg_clearance = 0.1;
@@ -531,71 +610,5 @@ stand_leg2_offset_w = (inky_board_w / 2) + rearpanel_key_spacing_w / 2;
 stand_crossbar_w = rearpanel_key_spacing_w + stand_leg_w;
 stand_crossbar_d = stand_leg_w;
 stand_crossbar_r = stand_leg_r;
-stand_crossbar_offset_w = stand_leg1_offset_w - (stand_leg_w / 2);
+stand_crossbar_offset_w = stand_leg1_offset_w - (stand_leg_w / 2) ;
 stand_crossbar_offset_d = stand_offset_d + (stand_leg_d / 2) - stand_crossbar_r;
-
-module stand() {
-  difference() {
-    union() { // union of solids
-      // leg1
-      translate([stand_leg1_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])
-        union() {
-          cube([stand_leg_w,stand_leg_r,stand_leg_h]);
-          translate([stand_leg_r,stand_leg_r,0]) cylinder(r=stand_leg_r,h=stand_leg_h);
-        }
-      translate([stand_leg1_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])  
-        rotate([-90+stand_angle,0,0])
-        union() {
-          cube([stand_leg_w,stand_leg_r,stand_leg_d]);
-          translate([stand_leg_r,0,stand_leg_r]) cylinder(r=stand_leg_r,h=stand_leg_d-stand_leg_r);
-        }
-      // peg1
-      translate([stand_leg1_offset_w,stand_offset_d,stand_peg_offset_h+stand_peg_stem_r])  
-        rotate([90,0,0])
-        union() {
-          cylinder(r=stand_peg_stem_r,h=stand_peg_stem_d);
-          hull(){
-            translate([0,0,stand_peg_stem_d]) cylinder(r=stand_peg_stem_r,h=stand_peg_flange_d);
-            translate([0,stand_peg_flange_r,stand_peg_stem_d]) cylinder(r=stand_peg_flange_r,h=stand_peg_flange_d);
-          }  
-        }
-      // leg2
-      translate([stand_leg2_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])
-        union() {
-          cube([stand_leg_w,stand_leg_r,stand_leg_h]);
-          translate([stand_leg_r,stand_leg_r,0]) cylinder(r=stand_leg_r,h=stand_leg_h);
-        }
-      translate([stand_leg2_offset_w-stand_leg_r,stand_offset_d,stand_offset_h])  
-        rotate([-90+stand_angle,0,0])
-        union() {
-          cube([stand_leg_w,stand_leg_r,stand_leg_d]);
-          translate([stand_leg_r,0,stand_leg_r]) cylinder(r=stand_leg_r,h=stand_leg_d-stand_leg_r);
-        }
-      // peg2
-      translate([stand_leg2_offset_w,stand_offset_d,stand_peg_offset_h+stand_peg_stem_r])  
-        rotate([90,0,0])
-        union() {
-          cylinder(r=stand_peg_stem_r,h=stand_peg_stem_d);
-          hull(){
-            translate([0,0,stand_peg_stem_d]) cylinder(r=stand_peg_stem_r,h=stand_peg_flange_d);
-            translate([0,stand_peg_flange_r,stand_peg_stem_d]) cylinder(r=stand_peg_flange_r,h=stand_peg_flange_d);
-          }  
-        }
-      //crossbar
-      translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
-        rotate([-90+stand_angle,0,0])
-        translate([0,0,-stand_crossbar_d]) union() {
-          cube([stand_crossbar_w,stand_crossbar_r,stand_crossbar_d]);
-          // translate([0,0,stand_crossbar_r]) rotate([0,90,0]) cylinder(r=stand_crossbar_r,h=stand_crossbar_w);
-        }  
-    } // union of solids
-    union() { // union of holes
-      translate([stand_leg1_offset_w,stand_offset_d,stand_peg_offset_h])  
-        rotate([stand_angle * 2,0,0])
-          translate([-stand_leg_w/2,-stand_leg_w,0]) cube([stand_leg_w,stand_leg_w,stand_peg_flange_r*2]);
-      translate([stand_leg2_offset_w,stand_offset_d,stand_peg_offset_h])  
-        rotate([stand_angle * 2,0,0])
-          translate([-stand_leg_w/2,-stand_leg_w,0]) cube([stand_leg_w,stand_leg_w,stand_peg_flange_r*2]);
-    } // union of holes
-  } // difference()
-} // module stand()
