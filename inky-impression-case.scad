@@ -39,7 +39,10 @@ REARPANEL = false;
 BUTTON = false;
 
 // A desk stand in printable orientation
-STAND = false;
+STAND = true;
+
+// A small cover for the IO port
+IOCOVER = false;
 
 // Show the fully assembled case
 ASSEMBLED = false;
@@ -81,6 +84,10 @@ if (ASSEMBLED) {
   stand();
   inky();
   rpizero();
+  powerboard();
+  usbboard();
+  ioconnector();
+  iocover();
 } else
 if (EXPLODED) {
   rotate([-stand_angle,0,0]) {
@@ -91,6 +98,10 @@ if (EXPLODED) {
     translate([-50,-50,0]) buttons();
     inky();
     translate([0,80,0]) rpizero();
+    translate([0,80,0]) powerboard();
+    translate([0,80,0]) usbboard();
+    translate([0,80,0]) ioconnector();
+    translate([0,-50,20]) iocover();
   }
 } else {
   // shows case parts in the correct orientation for printing
@@ -99,6 +110,7 @@ if (EXPLODED) {
   if (BACKPLANE) { rotate([90,0,0]) backplane(); }
   if (BUTTON) { rotate([90,0,0]) button(0); }
   if (STAND) { rotate([-stand_angle,0,0]) stand(); }
+  if (IOCOVER) { rotate([180,0,0]) iocover(); }
 }
 
 
@@ -124,8 +136,29 @@ module frame() {
         cube([frame_w - (frame_thickness_sides * 2), frame_d, frame_h - (frame_thickness_sides * 2)]);
 
       // inky connector cutout
-      translate([inky_conn_offset_w, inky_board_d, frame_offset_h - a_bit])
-        cube([inky_conn_w, frame_d, frame_thickness_sides + a_bit_more]);
+      //translate([inky_conn_offset_w, inky_board_d, frame_offset_h - a_bit])
+      //  cube([inky_conn_w, frame_d, frame_thickness_sides + a_bit_more]);
+        
+      // power connector cutout
+      translate([powerboard_offset_w+((powerboard_w-powerboard_socket_w)/2-powerboard_socket_clearance), powerboard_offset_d+powerboard_d-powerboard_socket_clearance, frame_offset_h - a_bit])
+        cube([powerboard_socket_w + powerboard_socket_clearance * 2, frame_d, frame_thickness_sides + a_bit_more]);
+        
+      // USB connector cutout
+      translate([usbboard_offset_w+((usbboard_w-usbboard_socket_w)/2-usbboard_socket_clearance), usbboard_offset_d+usbboard_d-usbboard_socket_clearance, frame_offset_h - a_bit])
+        cube([usbboard_socket_w + usbboard_socket_clearance * 2, frame_d, frame_thickness_sides + a_bit_more]);
+        
+      // IO connector cutout
+      translate([io_offset_w, backplane_offset_d+backplane_d, backplane_offset_h + backplane_h - a_bit])
+        difference(){
+          cube([io_w, frame_d, frame_thickness_sides + a_bit_more]);
+            
+          union(){
+            translate([io_w,0,0]) cylinder(h=frame_d+a_bit_more*2,r=io_w/3);
+            translate([0,io_d/2,0]) cylinder(h=frame_d+a_bit_more*2,r=io_w/3);
+            translate([io_w,io_d,0]) cylinder(h=frame_d+a_bit_more*2,r=io_w/3);
+            translate([0,io_d,0]) cube([io_w,io_h,frame_d+a_bit_more*2]);
+          }// union()
+      } // difference()
       
       // mount holes
       translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h]) {
@@ -140,6 +173,16 @@ module frame() {
       translate([rearpanel_offset_w, rearpanel_offset_d - rearpanel_mount_d, frame_offset_h + frame_h]) {
         translate([rearpanel_mount_r,rearpanel_mount_d-rearpanel_mount_r+rearpanel_d,a_bit]) rotate([180,0,0]) bolt(radius=rearpanel_mount_bolt_r + rearpanel_mount_bolt_clearance,length=rearpanel_mount_bolt_length);
       }
+      
+      // vent holes
+      for(i=[2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18]) {
+        translate([frame_offset_w + (frame_w/20)*i,frame_d-rearpanel_d-rearpanel_mount_r,frame_offset_h+frame_h-frame_thickness_sides-a_bit])
+          cylinder(h=frame_thickness_sides+a_bit_more, r=frame_vent_hole_r);
+      } // for()
+      for(i=[2,3,8,12,13,14,15,16,17,18]) {
+        translate([frame_offset_w + (frame_w/20)*i,frame_d-rearpanel_d-rearpanel_mount_r,frame_offset_h-a_bit])
+          cylinder(h=frame_thickness_sides+a_bit_more, r=frame_vent_hole_r);
+      } // for()
       
       // buttons
       translate([-frame_border - a_bit, inky_board_d, inky_btn_a_offset_h - button_clearance])
@@ -172,6 +215,25 @@ module backplane() {
         rotate([-90,0,0]) cylinder(h=backplane_d + backplane_mount_riser_d, r=backplane_mount_riser_r);
       translate([inky_mount_d_offset_w,inky_board_d+inky_mount_d,inky_mount_d_offset_h])
         rotate([-90,0,0]) cylinder(h=backplane_d + backplane_mount_riser_d, r=backplane_mount_riser_r);
+      // Powerboard mounts
+      translate([backplane_powerboard_mount_a_offset_w,backplane_offset_d+backplane_d,backplane_powerboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_powerboard_mount_d, r=backplane_powerboard_mount_r);
+      translate([backplane_powerboard_mount_b_offset_w,backplane_offset_d+backplane_d,backplane_powerboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_powerboard_mount_d, r=backplane_powerboard_mount_r);
+      // USBboard mounts
+      translate([backplane_usbboard_mount_a_offset_w,backplane_offset_d+backplane_d,backplane_usbboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_usbboard_mount_d, r=backplane_usbboard_mount_r);
+      translate([backplane_usbboard_mount_b_offset_w,backplane_offset_d+backplane_d,backplane_usbboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_usbboard_mount_d, r=backplane_usbboard_mount_r);
+      // IO connector supports
+      translate([io_offset_w - io_support_w - io_support_clearance, backplane_offset_d + backplane_d, io_offset_h])
+        cube([io_support_w,io_support_d,io_h]);
+      translate([io_offset_w + io_w + io_support_clearance, backplane_offset_d + backplane_d, io_offset_h])
+        cube([io_support_w,io_support_d,io_h]);
+      translate([io_offset_w + io_w - io_cutout_w + io_support_clearance, backplane_offset_d + backplane_d, io_offset_h + io_cutout_offset_h])
+        cube([io_cutout_w,io_support_d,io_cutout_h]);
+      translate([io_offset_w - io_support_clearance, backplane_offset_d + backplane_d, io_offset_h + io_cutout_offset_h])
+        cube([io_cutout_w,io_support_d,io_cutout_h]);
     } // union of solids
     
     union() { // union of holes
@@ -185,6 +247,16 @@ module backplane() {
         rotate([-90,0,0]) cylinder(h=backplane_d+backplane_mount_riser_d+a_bit_more, r=backplane_mount_hole_r);
       translate([inky_mount_d_offset_w,inky_board_d+inky_mount_d-a_bit,inky_mount_d_offset_h])
         rotate([-90,0,0]) cylinder(h=backplane_d+backplane_mount_riser_d+a_bit_more, r=backplane_mount_hole_r);
+      
+      translate([backplane_powerboard_mount_a_offset_w,backplane_offset_d-a_bit,backplane_powerboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_powerboard_mount_d + backplane_d + a_bit_more, r=backplane_powerboard_mount_hole_r);
+      translate([backplane_powerboard_mount_b_offset_w,backplane_offset_d-a_bit,backplane_powerboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_powerboard_mount_d + backplane_d + a_bit_more, r=backplane_powerboard_mount_hole_r);
+        
+      translate([backplane_usbboard_mount_a_offset_w,backplane_offset_d-a_bit,backplane_usbboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_usbboard_mount_d + backplane_d + a_bit_more, r=backplane_usbboard_mount_hole_r);
+      translate([backplane_usbboard_mount_b_offset_w,backplane_offset_d-a_bit,backplane_usbboard_mount_offset_h])
+        rotate([-90,0,0]) cylinder(h=backplane_usbboard_mount_d + backplane_d + a_bit_more, r=backplane_usbboard_mount_hole_r);
       
       // button cutouts
       translate([inky_btn_offset_w - backplane_clearance, inky_board_d + inky_mount_d - a_bit, inky_btn_a_offset_h - backplane_clearance]) {
@@ -376,6 +448,85 @@ module rpizero() {
     color("Green") cube([rpizero_w, rpizero_d, rpizero_h]);
 } // module rpizero()
 
+module ioconnector() {
+  // Crude io connector model to check for fit
+  difference(){ // union of solids
+    union() {
+      translate([io_offset_w, io_offset_d, io_offset_h])
+        color("Black") cube([io_w, io_d, io_h]);
+    } // union of solids
+    
+    union() { // union of holes
+      translate([io_offset_w-a_bit, io_offset_d-a_bit, io_offset_h + io_cutout_offset_h])
+        cube([io_cutout_w+a_bit, io_d+a_bit_more, io_cutout_h]);
+      translate([io_offset_w+io_w-io_cutout_w, io_offset_d-a_bit, io_offset_h + io_cutout_offset_h])
+        cube([io_cutout_w+a_bit, io_d+a_bit_more, io_cutout_h]);
+    } // union of holes
+  } //difference
+} // module ioconnector()
+
+module powerboard() {
+  // Crude model of power board to check for fit
+  
+  difference(){ // union of solids
+    union() {
+      translate([powerboard_offset_w, powerboard_offset_d, powerboard_offset_h])
+        color("SteelBlue") cube([powerboard_w, powerboard_d, powerboard_h]);
+      translate([powerboard_offset_w+((powerboard_w-powerboard_socket_w)/2), powerboard_offset_d+powerboard_d, powerboard_offset_h+powerboard_socket_offset_h])
+        color("Silver") cube([powerboard_socket_w, powerboard_socket_d, powerboard_socket_h]);
+    } // union of solids
+    
+    union() { // union of holes
+      translate([powerboard_offset_w+powerboard_hole_offset_w, powerboard_offset_d - a_bit, powerboard_offset_h+powerboard_hole_offset_h])
+        rotate([-90,0,0]) cylinder(h=powerboard_d+a_bit_more, r=powerboard_hole_r);
+      translate([powerboard_offset_w+powerboard_w-powerboard_hole_offset_w, powerboard_offset_d - a_bit, powerboard_offset_h+powerboard_hole_offset_h])
+        rotate([-90,0,0]) cylinder(h=powerboard_d+a_bit_more, r=powerboard_hole_r);
+    } // union of holes
+  } //difference
+} // module powerboard()
+
+module usbboard() {
+  // Crude model of USB board to check for fit
+  
+  difference(){ // union of solids
+    union() {
+      translate([usbboard_offset_w, usbboard_offset_d, usbboard_offset_h])
+        color("SteelBlue") cube([usbboard_w, usbboard_d, usbboard_h]);
+      translate([usbboard_offset_w+((usbboard_w-usbboard_socket_w)/2), usbboard_offset_d+usbboard_d, usbboard_offset_h+usbboard_socket_offset_h])
+        color("Silver") cube([usbboard_socket_w, usbboard_socket_d, usbboard_socket_h]);
+      translate([usbboard_offset_w+((usbboard_w-usbboard_stick_w)/2), usbboard_offset_d+usbboard_d+usbboard_stick_offset_d, usbboard_offset_h+usbboard_stick_offset_h])
+        color("Black") cube([usbboard_stick_w, usbboard_stick_d, usbboard_stick_h]);
+    } // union of solids
+    
+    union() { // union of holes
+      translate([usbboard_offset_w+usbboard_hole_offset_w, usbboard_offset_d - a_bit, usbboard_offset_h+usbboard_hole_offset_h])
+        rotate([-90,0,0]) cylinder(h=usbboard_d+a_bit_more, r=usbboard_hole_r);
+      translate([usbboard_offset_w+usbboard_w-usbboard_hole_offset_w, usbboard_offset_d - a_bit, usbboard_offset_h+usbboard_hole_offset_h])
+        rotate([-90,0,0]) cylinder(h=usbboard_d+a_bit_more, r=usbboard_hole_r);
+    } // union of holes
+  } //difference
+} // module powerboard()
+
+module iocover() {
+  color("SlateGray") translate([io_offset_w, backplane_offset_d+backplane_d, backplane_offset_h + backplane_h + a_bit_more])
+        difference(){
+          translate([io_cover_clearance,io_cover_clearance,0]) cube([io_w-io_cover_clearance*2, io_d-io_cover_clearance*2, frame_thickness_sides]);
+            
+          union(){
+            translate([io_w,0,-a_bit]) cylinder(h=frame_thickness_sides+a_bit_more,r=io_w/3+io_cover_clearance);
+            translate([0,io_d/2,-a_bit]) cylinder(h=frame_thickness_sides+a_bit_more,r=io_w/3+io_cover_clearance);
+            translate([io_w,io_d,-a_bit]) cylinder(h=frame_thickness_sides+a_bit_more,r=io_w/3+io_cover_clearance);
+            //translate([0,io_d,0]) cube([io_w,io_h,frame_d+a_bit_more*2]);
+              
+            // LED holes
+            translate([(io_w/2)+(io_cover_hole_pitch/2),(io_d/2)-(io_cover_hole_pitch/2),-a_bit])
+              cylinder(h=frame_thickness_sides+a_bit_more,r=io_cover_hole_r);
+            translate([(io_w/2)+(io_cover_hole_pitch/2),(io_d/2)+(io_cover_hole_pitch/2),-a_bit])
+              cylinder(h=frame_thickness_sides+a_bit_more,r=io_cover_hole_r);
+          }// union()
+      } // difference()   
+}
+
 module inky() {
   // Model of the Inky Impression to test fit within the case
   
@@ -543,6 +694,8 @@ frame_h = inky_screen_h + (frame_border * 2);
 frame_offset_w = inky_screen_offset_w - frame_border;
 frame_offset_h = inky_screen_offset_h - frame_border;
 frame_offset_d = 0 - frame_clearance_d - frame_thickness_front;
+frame_vent_hole_num = 20;
+frame_vent_hole_r = 1.5;
 
 // Backplane dimensions
 backplane_clearance = 0.5; // cutout clearance around obstructions
@@ -569,6 +722,73 @@ button_lug_offset_w = frame_thickness_sides + button_clearance;
 button_lug_offset_h = button_h / 2 - button_lug_h / 2;
 button_lug_offset_d = button_d;
 
+// io connector dimensions
+io_w = 5.25;
+io_h = 14;
+io_d = 10;
+io_offset_w = (inky_board_w / 2) - (io_w /2);
+io_offset_h = backplane_offset_h + backplane_h - io_h;
+io_offset_d = backplane_offset_d + backplane_d;
+io_cutout_w = 0.35;
+io_cutout_h = 1.5;
+io_cutout_offset_h = 8.5;
+io_support_w = 1.6;
+io_support_h = io_h;
+io_support_d = io_d - 1;
+io_support_clearance = 0.01;
+io_cover_clearance = 0.25;
+io_cover_hole_pitch = 2.54;
+io_cover_hole_r = 0.5;
+
+// power connector dimensions
+powerboard_w = 14;
+powerboard_h = 15;
+powerboard_d = 1.5;
+powerboard_offset_w = (inky_board_w / 2) - (powerboard_w /2);
+powerboard_offset_h = 1;
+powerboard_socket_w = 7.5;
+powerboard_socket_h = 5.75;
+powerboard_socket_d = 2.5;
+powerboard_socket_offset_h = -1;
+powerboard_socket_clearance = 2;
+powerboard_hole_r = 1.6;
+powerboard_hole_offset_w = 2.5;
+powerboard_hole_offset_h = 9;
+backplane_powerboard_mount_a_offset_w = powerboard_offset_w + powerboard_hole_offset_w;
+backplane_powerboard_mount_b_offset_w = powerboard_offset_w + powerboard_w - powerboard_hole_offset_w;
+backplane_powerboard_mount_offset_h = powerboard_offset_h + powerboard_hole_offset_h;
+backplane_powerboard_mount_hole_r = 1.25;
+backplane_powerboard_mount_r = backplane_powerboard_mount_hole_r * 2;
+backplane_powerboard_mount_d = 3;
+powerboard_offset_d = backplane_offset_d + backplane_d + backplane_powerboard_mount_d;
+
+// USB connector dimensions
+usbboard_w = 17;
+usbboard_h = 17;
+usbboard_d = 1.5;
+usbboard_offset_w = (inky_board_w / 4) - (usbboard_w /2);
+usbboard_offset_h = 5;
+usbboard_socket_w = 14.25;
+usbboard_socket_h = 14;
+usbboard_socket_d = 7;
+usbboard_socket_offset_h = -5;
+usbboard_socket_clearance = 2;
+usbboard_stick_w = 14;
+usbboard_stick_h = 19;
+usbboard_stick_d = 4.6;
+usbboard_stick_offset_h = -15;
+usbboard_stick_offset_d = 1.5;
+usbboard_hole_r = 1.5;
+usbboard_hole_offset_w = 2.5;
+usbboard_hole_offset_h = 11;
+backplane_usbboard_mount_a_offset_w = usbboard_offset_w + usbboard_hole_offset_w;
+backplane_usbboard_mount_b_offset_w = usbboard_offset_w + usbboard_w - usbboard_hole_offset_w;
+backplane_usbboard_mount_offset_h = usbboard_offset_h + usbboard_hole_offset_h;
+backplane_usbboard_mount_hole_r = 1.25;
+backplane_usbboard_mount_r = backplane_usbboard_mount_hole_r * 2;
+backplane_usbboard_mount_d = 3;
+usbboard_offset_d = backplane_offset_d + backplane_d + backplane_usbboard_mount_d;
+
 // rear panel dimensions
 rearpanel_clearance = 0.2;
 rearpanel_w = frame_w - frame_thickness_sides * 2 - rearpanel_clearance * 2;
@@ -579,8 +799,8 @@ rearpanel_offset_h = frame_offset_h + frame_thickness_sides + rearpanel_clearanc
 rearpanel_offset_d = frame_offset_d + frame_d - rearpanel_d;
 rearpanel_mount_w = -frame_offset_w - frame_thickness_sides;
 rearpanel_mount_d = rearpanel_offset_d - backplane_offset_d - backplane_d;
-rearpanel_mount_h = 8;
-rearpanel_mount_r = 5;
+rearpanel_mount_h = 6;
+rearpanel_mount_r = 3.5;
 rearpanel_mount_insert_r = INSERT_DIAMETER / 2;
 rearpanel_mount_bolt_r = BOLT_DIAMETER / 2;
 rearpanel_mount_bolt_length = 6;
@@ -593,9 +813,10 @@ rearpanel_key_spacing_w = 100;
 // stand dimensions
 stand_angle = 20;
 stand_offset_d = rearpanel_offset_d + rearpanel_d;
-stand_offset_h = frame_offset_h;
+stand_base_clearance_h = 14;
+stand_offset_h = frame_offset_h - stand_base_clearance_h;
 stand_leg_w = 8;
-stand_leg_h = inky_board_h * 2/3;
+stand_leg_h = inky_board_h * 2/3 + stand_base_clearance_h;
 stand_leg_d = 40;
 stand_leg_r = stand_leg_w / 2;
 stand_peg_offset_h = inky_board_h / 2;
