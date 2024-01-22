@@ -1,6 +1,6 @@
 // inky-impression-case.scad
 //
-// Copyright: Douglas Reed, January 2021
+// Copyright: Douglas Reed, September 2023
 //
 // This is a wall-mounting case for:
 //
@@ -39,10 +39,13 @@ REARPANEL = false;
 BUTTON = false;
 
 // A desk stand in printable orientation
-STAND = true;
+STAND = false;
 
 // A small cover for the IO port
 IOCOVER = false;
+
+// A front cover to protect the screen
+FRONTCOVER = true;
 
 // Show the fully assembled case
 ASSEMBLED = false;
@@ -88,6 +91,7 @@ if (ASSEMBLED) {
   usbboard();
   ioconnector();
   iocover();
+  frontcover();
 } else
 if (EXPLODED) {
   rotate([-stand_angle,0,0]) {
@@ -102,6 +106,7 @@ if (EXPLODED) {
     translate([0,80,0]) usbboard();
     translate([0,80,0]) ioconnector();
     translate([0,-50,20]) iocover();
+    translate([0,-80,00]) frontcover();
   }
 } else {
   // shows case parts in the correct orientation for printing
@@ -111,6 +116,7 @@ if (EXPLODED) {
   if (BUTTON) { rotate([90,0,0]) button(0); }
   if (STAND) { rotate([-stand_angle,0,0]) stand(); }
   if (IOCOVER) { rotate([180,0,0]) iocover(); }
+  if (FRONTCOVER) { rotate([90,0,0]) frontcover(); }
 }
 
 
@@ -415,7 +421,14 @@ module stand() {
             translate([0,stand_peg_flange_r,stand_peg_stem_d]) cylinder(r=stand_peg_flange_r,h=stand_peg_flange_d);
           }  
         }
-      //crossbar
+      //rear crossbar
+      translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
+        rotate([-90+stand_angle,0,0])
+        translate([0,0,stand_leg_d-stand_crossbar_d]) union() {
+          cube([stand_crossbar_w,stand_crossbar_r,stand_crossbar_d]);
+          translate([0,stand_crossbar_r,0]) rotate([0,90,0]) cylinder(r=stand_crossbar_r,h=stand_crossbar_w);
+        }
+       //front crossbar
       translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
         rotate([-90+stand_angle,0,0])
         translate([0,0,-stand_crossbar_d]) union() {
@@ -431,12 +444,20 @@ module stand() {
       translate([stand_leg2_offset_w,stand_offset_d,stand_peg_offset_h])  
         rotate([stand_angle * 2,0,0])
           translate([-stand_leg_w/2,-stand_leg_w,0]) cube([stand_leg_w,stand_leg_w,stand_peg_flange_r*2]);
-      // cut off base of crossbar
-      //crossbar
+      // cut off base of rear crossbar
+      // crossbar
+      translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
+        rotate([-90+stand_angle,0,0])
+        translate([0,0,stand_leg_d-stand_crossbar_d]) union() {
+          translate([-a_bit,stand_crossbar_r,-stand_crossbar_r]) cube([stand_crossbar_w+a_bit_more,stand_crossbar_r,stand_crossbar_d]);
+        }
+      // cut off base and middle of front crossbar
+      // crossbar
       translate([stand_crossbar_offset_w,stand_offset_d,stand_offset_h])  
         rotate([-90+stand_angle,0,0])
         translate([0,0,-stand_crossbar_d]) union() {
           translate([-a_bit,stand_crossbar_r,-stand_crossbar_r]) cube([stand_crossbar_w+a_bit_more,stand_crossbar_r,stand_crossbar_d]);
+          translate([stand_leg_w,-a_bit,-stand_crossbar_r-a_bit]) cube([stand_crossbar_w-(stand_leg_w*2),stand_crossbar_r+a_bit_more,stand_crossbar_d+stand_crossbar_r+a_bit_more]);
         }
     } // union of holes
   } // difference()
@@ -526,6 +547,42 @@ module iocover() {
           }// union()
       } // difference()   
 }
+
+module frontcover() {
+  difference() {
+    color("Red") translate([cover_offset_w, cover_offset_d, cover_offset_h])
+      cube([cover_w, cover_d, cover_h]);
+    
+    translate([cover_offset_w + cover_thickness_sides - cover_clearance, cover_offset_d + cover_thickness_front, cover_offset_h + cover_thickness_sides - cover_clearance])
+      cube([cover_w - cover_thickness_sides * 2 + cover_clearance * 2, cover_d, cover_h - cover_thickness_sides * 2 + cover_clearance * 2]);
+  } // difference()
+  
+  // spacers
+  color("Red") {
+    translate([cover_offset_w, cover_offset_d + cover_thickness_front, cover_offset_h + cover_h - cover_thickness_sides - cover_spacer_width])
+      cube([cover_w,cover_spacer_d,cover_spacer_width + cover_thickness_sides]);
+    translate([cover_offset_w, cover_offset_d + cover_thickness_front, cover_offset_h])
+      cube([cover_spacer_width + cover_thickness_sides,cover_spacer_d,cover_h]);
+    translate([cover_offset_w + cover_w - cover_thickness_sides - cover_spacer_width + cover_clearance, cover_offset_d + cover_thickness_front, cover_offset_h])
+      cube([cover_spacer_width,cover_spacer_d,cover_h]);
+    
+      difference() {
+        translate([cover_offset_w, cover_offset_d, cover_offset_h])
+          cube([cover_w,cover_spacer_d + cover_thickness_front,stand_crossbar_d+stand_crossbar_r+cover_spacer_width + cover_clearance * 2 + cover_thickness_sides]);
+        
+        union() { //union() of holes
+           translate([stand_crossbar_offset_w - cover_clearance, cover_offset_d + cover_thickness_front, cover_offset_h + cover_thickness_sides])
+             cube([stand_crossbar_w + cover_clearance * 2, cover_spacer_d + a_bit_more, stand_crossbar_d + stand_crossbar_r + cover_clearance * 2]);
+            
+           translate([stand_leg1_offset_w - stand_leg_r - cover_clearance, cover_offset_d + cover_thickness_front, cover_offset_h + cover_thickness_sides])
+             cube([stand_leg_w + cover_clearance * 2, cover_spacer_d + a_bit_more, stand_crossbar_d *2]);
+          translate([stand_leg2_offset_w - stand_leg_r - cover_clearance, cover_offset_d + cover_thickness_front, cover_offset_h + cover_thickness_sides])
+             cube([stand_leg_w + cover_clearance * 2, cover_spacer_d + a_bit_more, stand_crossbar_d *2]);
+        } //union() of holes
+      } // difference()
+  }
+  
+} // module frontcover()
 
 module inky() {
   // Model of the Inky Impression to test fit within the case
@@ -813,7 +870,7 @@ rearpanel_key_spacing_w = 100;
 // stand dimensions
 stand_angle = 20;
 stand_offset_d = rearpanel_offset_d + rearpanel_d;
-stand_base_clearance_h = 14;
+stand_base_clearance_h = 10;
 stand_offset_h = frame_offset_h - stand_base_clearance_h;
 stand_leg_w = 8;
 stand_leg_h = inky_board_h * 2/3 + stand_base_clearance_h;
@@ -832,4 +889,18 @@ stand_crossbar_w = rearpanel_key_spacing_w + stand_leg_w;
 stand_crossbar_d = stand_leg_w;
 stand_crossbar_r = stand_leg_r;
 stand_crossbar_offset_w = stand_leg1_offset_w - (stand_leg_w / 2) ;
-stand_crossbar_offset_d = stand_offset_d + (stand_leg_d / 2) - stand_crossbar_r;
+stand_crossbar_offset_d = stand_offset_d + stand_leg_d - stand_crossbar_r;
+
+// front cover dimensions
+cover_thickness_front = 3;
+cover_thickness_sides = 1.6;
+cover_clearance = 0.1;
+cover_spacer_d = 2;
+cover_spacer_width = 2;
+cover_overlap_d = 3;
+cover_w = frame_w + (cover_thickness_sides * 2) + (cover_clearance * 2);
+cover_h = frame_h + (cover_thickness_sides * 2) + (cover_clearance * 2);
+cover_d = cover_thickness_front + cover_spacer_d + cover_overlap_d;
+cover_offset_w = frame_offset_w - cover_thickness_sides - cover_clearance;
+cover_offset_h = frame_offset_h - cover_thickness_sides - cover_clearance;
+cover_offset_d = frame_offset_d - cover_thickness_front - cover_spacer_d;
